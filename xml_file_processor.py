@@ -29,11 +29,7 @@ class FileProcessor:
             tree = ET.parse(filename)
             root = tree.getroot()
             for record in root.findall('.//record'):
-                if record.find('id').text == record_id:
-                    root.remove(record)
-                    tree.write(filename)
-                    print("Succes!")
-                    return
+                return _remove_record(filename, record_id, tree, root, record)
             print("Record not found.")
         except FileNotFoundError:
             print("File not found.")
@@ -45,17 +41,13 @@ class FileProcessor:
             tree = ET.parse(filename)
             root = tree.getroot()
             for record in root.findall('.//record'):
-                if record.find('id').text == record_id:
-                    root.remove(record)
-                    root.append(new_record)
-                    tree.write(filename)
-                    print("Record updated successfully.")
-                    return
+                return _update_record(filename, record_id, new_record, tree, root, record)
             print("Record not found.")
         except FileNotFoundError:
             print("File not found.")
         except ET.ParseError:
             print("Error parsing XML file.")
+
 
     def display_records(self, filename):
         try:
@@ -67,3 +59,20 @@ class FileProcessor:
             print("File not found.")
         except ET.ParseError:
             print("Error parsing XML file.")
+
+
+def _remove_record(filename, record_id, tree, root, record):
+    if record.find('id').text == record_id:
+        root.remove(record)
+        tree.write(filename)
+        print("Succes!")
+        return
+
+        
+def _update_record(filename, record_id, new_record, tree, root, record):
+    if record.find('id').text == record_id:
+        root.remove(record)
+        root.append(new_record)
+        tree.write(filename)
+        print("Record updated successfully.")
+        return
